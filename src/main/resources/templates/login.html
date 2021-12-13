@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Авторизация</title>
+</head>
+<body>
+<div>
+    <form action="/login" method="post">
+        <label for="username"> Имя пользователя: <input type="text" name="username" class="form-control" id="username" /></label>
+        <label for="password"> Пароль: <input type="password" name="password" class="form-control" id="password" placeholder="Password" /></label>
+        <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
+        <input type="submit" class="btn btn-primary" value="Sign In"/>
+    </form>
+    <a href="/registration" class="btn btn-primary">Создать нового пользователя</a>
+</div>
+</body>
+</html>
