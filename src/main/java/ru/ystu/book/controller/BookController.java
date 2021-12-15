@@ -53,17 +53,29 @@ public class BookController {
         }
         return "books";
     }
-    @PostMapping("/")
-    public String addBook(Book book) {
+    @GetMapping("/add")
+    public String getAddBooks(Model model){
+        return "book_add";
+    }
+    @PostMapping("/add")
+    public String addBooks(Book book, Model model){
         bookRep.save(book);
         return "redirect:/";
     }
     @GetMapping("/{id}")
-    public String getBook(@PathVariable Long id, Model model) throws FileNotFoundException {
+    public String getBook(@PathVariable Long id, Model model, Principal user) throws FileNotFoundException {
         Optional<Book> optionalBook = bookRep.findAllById(id);
         if (optionalBook.isEmpty())
             throw new FileNotFoundException();
+        User curUser = userRep.findByUsername(user.getName());
+        Set<Role> role = curUser.getRoles();
+        if(role.toArray()[0] == Role.USER){
+            model.addAttribute("user_role", "USER");
+        } else {
+            model.addAttribute("user_role", "ADMIN");
+        }
         model.addAttribute("book", optionalBook.get());
+
         return "book";
     }
     @PostMapping("/{id}")
@@ -80,13 +92,19 @@ public class BookController {
         return "book";
     }
     @GetMapping("/edit/{id}")
-    public String editBook(@PathVariable Long id, Model model) throws FileNotFoundException {
+    public String editBook(@PathVariable Long id, Model model, Principal user) throws FileNotFoundException {
         Optional<Book> optionalBook = bookRep.findAllById(id);
         if (optionalBook.isEmpty())
             throw new FileNotFoundException();
-        ArrayList<Book> res = new ArrayList<>();
-        optionalBook.ifPresent(res::add);
-        model.addAttribute("book", res);
+        User curUser = userRep.findByUsername(user.getName());
+        Set<Role> role = curUser.getRoles();
+        if(role.toArray()[0] == Role.USER){
+            model.addAttribute("user_role", "USER");
+        } else {
+            model.addAttribute("user_role", "ADMIN");
+        }
+        model.addAttribute("book", optionalBook.get());
+
         return "book_edit";
     }
     @GetMapping("/remove/{id}")
@@ -98,13 +116,20 @@ public class BookController {
         return "redirect:/";
     }
     @GetMapping("/cart/{id}")
-    public String addToCart(Model model, @PathVariable Long id, Principal user){
+    public String addToCart(@PathVariable Long id, Principal user){
         Cart cart = new Cart(userRep.findByUsername(user.getName()).getId(), id);
         cartRep.save(cart);
         return "redirect:/";
     }
     @GetMapping("/mycart")
     public String myCart(Model model, Principal user) {
+        User curUser = userRep.findByUsername(user.getName());
+        Set<Role> role = curUser.getRoles();
+        if(role.toArray()[0] == Role.USER){
+            model.addAttribute("user_role", "USER");
+        } else {
+            model.addAttribute("user_role", "ADMIN");
+        }
         List<Cart> carts = cartRep.findAllByUser(userRep.findByUsername(user.getName()).getId());
         List<Book> books = new ArrayList<>();
         for(Cart cart : carts) {

@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<Book> findAllByNameContains(String name);
     Optional<Book> findAllById(Long id);
+    long countAllByName(String name);
 }
