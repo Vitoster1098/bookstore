@@ -8,18 +8,33 @@
     <title>Редактирование книги</title>
 </head>
 <body>
+<div class="container">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+        <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+            <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
+        </a>
+
+        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <li><a href="/" class="nav-link px-2 link-dark">Главная</a></li>
+            <li><a href="/books/add" class="nav-link px-2 link-dark">Добавить книгу</a></li>
+            <li><a href="/books/mycart" class="nav-link px-2">Корзина</a></li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+            <a href="/login"><button type="button" class="btn btn-outline-primary me-2">Login</button></a>
+            <a href="/registration"><button type="button" class="btn btn-outline-primary">Sign-up</button></a>
+            <a href="/logout"><button type="button" class="btn btn-outline-primary">Logout</button></a>
+        </div>
+    </header>
+</div>
 <h1>Редактирование книги</h1>
-<input type="button" value="Добавить книгу" href="book_add.html">
-<a href="mycart.html"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
-    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-</svg></a>
 <div class="container">
     <div class="row">
-        <form method="post" action="/books/remove">
-            <label for="name">Название книги: <input name="name" class="form-control" value={{book.name}} /></label>
-            <label for="year">Дата выпуска: <input name="year" class="form-control" value={{book.year}} /></label>
-            <label for="price">Цена продажи: <input name="price" class="form-control" value={{book.price}} /></label>
-            <input type="hidden" name="_csrf" value="{{_csrf.token}}" />
+        <form method="post" action="/books/add">
+            <label for="name">Название книги: <input name="name" id="name" class="form-control" th:value="${book.name}" /></label><br>
+            <label for="year">Дата выпуска: <input name="year" id="year" class="form-control" th:value="${book.year}" /></label><br><br>
+            <label for="description">Описание книги: <textarea id="description" th:text="${book.description}"></textarea></label><br><br>
+            <label for="price">Цена продажи: <input name="price" id="price" class="form-control" th:value="${book.price}" /></label><br>
             <button type="submit" class="btn btn-dark">Изменить</button>
     </form>
     </div>

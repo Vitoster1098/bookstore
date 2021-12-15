@@ -8,27 +8,37 @@
     <title>Книги</title>
 </head>
 <body>
+
+<div class="container">
+    <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+        <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+            <svg class="bi me-2" width="40" height="32" role="img" aria-label="Bootstrap"><use xlink:href="#bootstrap"></use></svg>
+        </a>
+
+        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+            <li><a href="/" class="nav-link px-2 link-secondary">Главная</a></li>
+            <li><a href="/books/add" class="nav-link px-2 link-dark">Добавить книгу</a></li>
+            <li><a href="/books/mycart" class="nav-link px-2 link-dark">Корзина</a></li>
+        </ul>
+
+        <div class="col-md-3 text-end">
+            <a href="/login"><button type="button" class="btn btn-outline-primary me-2">Login</button></a>
+            <a href="/registration"><button type="button" class="btn btn-outline-primary">Sign-up</button></a>
+            <a href="/logout"><button type="button" class="btn btn-outline-primary">Logout</button></a>
+        </div>
+    </header>
+</div>
+
 <h1>Список книжек</h1>
-<input type="button" value="Добавить книгу" href="book_add.html">
-<a href="mycart.html"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart" viewBox="0 0 16 16">
-    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5zM3.102 4l1.313 7h8.17l1.313-7H3.102zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2zm7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
-</svg></a>
+
 <table class="table">
     <tr th:each="book: ${books}">
-        <a th:href="@{books/{id}(id=${book.id})}"><td th:text="${book.name}"></td></a>
+        <td><a th:href="@{/books/{id}(id=${book.id})}"><p th:text="${book.name}"></p></a></td>
         <td th:text="${book.year}"></td>
-        <td th:text="${book.price}"></td>
-        <div th:if="${user_role} ? 'ADMIN'">
-            <td><a th:href="@{books/remove/{id}(id=${book.id})}" class="btn btn-dark">Удалить</a></td>
-            <td><button type="button" th:href="@{books/edit/{id}(id=${book.id})}" class="btn btn-dark">Изменить</button></td>
-        </div>
+        <td th:text="${book.price}">₽</td>
+        <td><a th:href="@{/books/remove/{id}(id=${book.id})}"><button type="button"  class="btn btn-danger">Удалить</button></a></td>
+        <td><a th:href="@{/books/edit/{id}(id=${book.id})}"><button type="button"  class="btn btn-warning">Изменить</button></a></td>
     </tr>
 </table>
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
-        crossorigin="anonymous"></script>
 </body>
 </html>
