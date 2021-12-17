@@ -30,18 +30,24 @@
 
 <h1>Корзина</h1>
 <table class="table">
-    <div th:if="${cartitems}">
-    <tr th:each="book: ${cartitems}">
-        <td><a th:href="@{/books/{id}(id=${book.id})}"><p th:text="${book.name}"></p></a></td>
-        <td th:text="${book.year}"></td>
-        <td th:text="${book.price}">₽</td>
-    </tr>
+    <div th:if="${cartitems.size() > 0}">
+        <tr th:each="book: ${cartitems}">
+            <td><a th:href="@{/books/{id}(id=${book.id})}"><p th:text="${book.name}"></p></a></td>
+            <td th:text="${book.year}"></td>
+            <td th:text="${book.price}">₽</td>
+            <td><a th:href="@{/books/mycart/remove/{id}(id=${book.id})}"><button class="btn btn-danger">Удалить из корзины</button></a></td>
+        </tr>
+            <div>
+                <hr>
+                <p>Итоговая стоимость: </p><h3 th:text="${totalprice}"></h3>
+            </div>
     </div>
-    <div th:unless="${cartitems}">
+    <div th:unless="${cartitems.size() > 0}">
         <tr>
             <td>В корзине нет книг!</td>
         </tr>
     </div>
+
 </table>
 </body>
 </html>

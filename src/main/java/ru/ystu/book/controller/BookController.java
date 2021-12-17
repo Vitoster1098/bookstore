@@ -132,11 +132,26 @@ public class BookController {
         }
         List<Cart> carts = cartRep.findAllByUser(userRep.findByUsername(user.getName()).getId());
         List<Book> books = new ArrayList<>();
+        double curPrice = 0;
         for(Cart cart : carts) {
             Optional<Book> bk = bookRep.findById(cart.getBookId());
             bk.ifPresent(books::add);
+            curPrice += bk.get().getPrice();
         }
         model.addAttribute("cartitems", books);
+        model.addAttribute("totalprice", curPrice);
         return "mycart";
+    }
+    @GetMapping("/mycart/remove/{id}")
+    public String remFromCart(@PathVariable Long id, Model model, Principal user){
+        List<Cart> carts = cartRep.findAllByUser(userRep.findByUsername(user.getName()).getId());
+        for (Cart cart : carts) {
+            Optional<Book> bk = bookRep.findById(cart.getBookId());
+            if(bk.get().getId() == id){
+                cartRep.delete(cart);
+                break;
+            }
+        }
+        return "redirect:/books/mycart";
     }
 }
