@@ -45,14 +45,16 @@ public class BookController {
     public String getAllBooks(Model model, Principal user) {
         User curUser = userRep.findByUsername(user.getName());
         Set<Role> role = curUser.getRoles();
+        if(model.getAttribute("books") != null){
 
-        Iterable<Book> items = bookRep.findAll();
-        model.addAttribute("books", items);
+        } else {
+            Iterable<Book> items = bookRep.findAll();
+            model.addAttribute("books", items);
+        }
         if(role.toArray()[0] == Role.ADMIN)
             model.addAttribute("user_role", "ADMIN");
         else
             model.addAttribute("user_role", "USER");
-
         return "books";
     }
     @GetMapping("/add")
@@ -177,7 +179,7 @@ public class BookController {
     }
     @GetMapping("/search")
     public String filtering(@RequestParam("name") String name, @RequestParam("year") String year,
-        @RequestParam("minprice") String minprice, @RequestParam("maxprice") String maxprice, Model model) {
+        @RequestParam("minprice") String minprice, @RequestParam("maxprice") String maxprice, Model model, Principal user) {
         List<Book> bookRes = new ArrayList<>();
 
         if(name == "" && year == "" && minprice == "" && maxprice == ""){
@@ -197,6 +199,6 @@ public class BookController {
             bookRes = bookRep.findWithLike4(Double.parseDouble(minprice), Double.parseDouble(maxprice));
 
             model.addAttribute("books", bookRes);
-        return "books";
+        return getAllBooks(model, user);
     }
 }
