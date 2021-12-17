@@ -1,6 +1,7 @@
 package ru.ystu.book.controller;
 
 import lombok.extern.log4j.Log4j2;
+import net.bytebuddy.dynamic.DynamicType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -174,32 +175,28 @@ public class BookController {
         }
         return "redirect:/books/mycart";
     }
-    @GetMapping("/search{name}&year={year}&minprice={minprice}&maxprice={maxprice}")
-    public String filtering(@PathVariable("name") String name, @PathVariable("year") String year,
-                            @PathVariable("minprice") String minprice, @PathVariable("maxprice") String maxprice, Model model) {
-        System.out.println("Попали в обработку поиска");
-        List<Book> bookRes = new ArrayList<>(); //Найденные книги
+    @GetMapping("/search")
+    public String filtering(@RequestParam("name") String name, @RequestParam("year") String year,
+        @RequestParam("minprice") String minprice, @RequestParam("maxprice") String maxprice, Model model) {
+        List<Book> bookRes = new ArrayList<>();
+
         if(name == "" && year == "" && minprice == "" && maxprice == ""){
-            model.addAttribute("message", "Параметры фильтра отсутствуют.");
-            return "books";
+            return "redirect:/";
         }
+        if (minprice == "")
+            minprice = "0";
+        if(maxprice == "")
+            maxprice = "" + (Double.MAX_VALUE);
+        if(name != "" && year != "")
+            bookRes = bookRep.findWithLike(name, year, Double.parseDouble(minprice), Double.parseDouble(maxprice));
+        else if(name == "" && year != "")
+            bookRes = bookRep.findWithLike2(year, Double.parseDouble(minprice), Double.parseDouble(maxprice));
+        else if(name != "" && year == "")
+            bookRes = bookRep.findWithLike3(name, Double.parseDouble(minprice), Double.parseDouble(maxprice));
+        else if(name == "" && year == "")
+            bookRes = bookRep.findWithLike4(Double.parseDouble(minprice), Double.parseDouble(maxprice));
 
-        if(name != "" && year != "" && minprice != "" && maxprice != "")
-            bookRes = bookRep.findWithLike(name.toString(), year.toString(), Double.parseDouble(minprice), Double.parseDouble(maxprice));
-        if(name == "" && year != "" && minprice != "" && maxprice != "")
-            bookRes = bookRep.findWithLike2(year.toString(), Double.parseDouble(minprice), Double.parseDouble(maxprice));
-        if(name == "" && year == "" && minprice != "" && maxprice != "")
-            bookRes = bookRep.findWithLike3(Double.parseDouble(minprice), Double.parseDouble(maxprice));
-        if(name == "" && year == "" && minprice == "" && maxprice != "")
-            bookRes = bookRep.findWithLike4(Double.parseDouble(maxprice));
-        if(name == "" && year == "" && minprice != "" && maxprice == "")
-            bookRes = bookRep.findWithLike5(Double.parseDouble(minprice));
-        if(name == "" && year != "" && minprice != "" && maxprice == "")
-            bookRes = bookRep.findWithLike6(year.toString());
-        if(name != "" && year != "" && minprice == "" && maxprice == "")
-            bookRes = bookRep.findWithLike7(name.toString());
-
-        model.addAttribute("books", bookRes);
+            model.addAttribute("books", bookRes);
         return "books";
     }
 }

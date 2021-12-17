@@ -12,31 +12,25 @@ import java.util.Optional;
 @Repository
 public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<Book> findAllByNameContains(String name);
+    Optional<Book> findAllByYear(String year);
+    Optional<Book> PriceIsBetween(double min, double max);
     Optional<Book> findAllById(Long id);
     long countAllByName(String name);
 
-    @Query("select id, name, price, year from Book where name like :name and year=:year and price>:minprice and price<:maxprice")
+    @Query("select new Book(u.id, u.name, u.description, u.year,u.price) from Book u where u.name like %:name% and u.year=:year and u.price>:minprice and u.price<:maxprice")
     List<Book> findWithLike(@Param("name") String name, @Param("year") String year, @Param("minprice") double minprice,
-                          @Param("maxprice") double maxprice);
+                            @Param("maxprice") double maxprice);
 
-    @Query("select id, name, price, year from Book where year=:year and price>:minprice and price<:maxprice")
+    @Query("select new Book(u.id, u.name, u.description, u.year,u.price) from Book u where u.year=:year and u.price>:minprice and u.price<:maxprice")
     List<Book> findWithLike2(@Param("year") String year, @Param("minprice") double minprice,
                             @Param("maxprice") double maxprice);
 
-    @Query("select id, name, price, year from Book where price>:minprice and price<:maxprice")
-    List<Book> findWithLike3(@Param("minprice") double minprice,
-                             @Param("maxprice") double maxprice);
+    @Query("select new Book(u.id, u.name, u.description, u.year,u.price) from Book u where u.name like %:name% and u.price>:minprice and u.price<:maxprice")
+    List<Book> findWithLike3(@Param("name") String name, @Param("minprice") double minprice,
+                                 @Param("maxprice") double maxprice);
 
-    @Query("select id, name, price, year from Book where price<:maxprice")
-    List<Book> findWithLike4(@Param("maxprice") double maxprice);
-
-    @Query("select id, name, price, year from Book where price>:minprice")
-    List<Book> findWithLike5(@Param("minprice") double minprice);
-
-    @Query("select id, name, price, year from Book where year=:year")
-    List<Book> findWithLike6(@Param("year") String year);
-
-    @Query("select id, name, price, year from Book where year like :name")
-    List<Book> findWithLike7(@Param("name") String name);
+    @Query("select new Book(u.id, u.name, u.description, u.year,u.price) from Book u where u.price>:minprice and u.price<:maxprice")
+    List<Book> findWithLike4(@Param("minprice") double minprice,
+                                 @Param("maxprice") double maxprice);
 }
 

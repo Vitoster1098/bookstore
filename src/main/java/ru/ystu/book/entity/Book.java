@@ -17,7 +17,7 @@ public class Book {
 
     public Book(){}
 
-    public Book(Long id, String name, String description, String year, double price, String image){
+    public Book(Long id, String name, String description, String year, double price){
         super();
         this.id = id;
         this.name = name;
