@@ -30,14 +30,34 @@
 </div>
 
 <h1>Список книжек</h1>
+<h3>Фильтрация</h3>
+<div class="container">
+    <div class="row">
+        <form method="get" action="/books/search">
+            <label for="name">Название книги: <input name="name" id="name" class="form-control" placeholder="Название книги"></label>
+            <label for="year">Год издания: <input name="year" min="01.01.1700" max="31.12.2999" id="year" class="form-control" placeholder="Год издания"></label>
+            <label for="minprice">Минимальная цена: <input min="0" name="minprice" id="minprice" class="form-control" placeholder="Минимальная цена"></label>
+            <label for="maxprice">Максимальная цена: <input min="0" name="maxprice" id="maxprice" class="form-control" placeholder="Максимальная цена"></label>
+            <button class="btn btn-success" type="submit">Поиск</button>
+        </form>
+    </div>
+</div><br>
+<div class="panel-info" th:if="${message}"> //После показа сообщения будет редирект на главную страницу
+    <p th:text="${message}"></p>
+    <script>
+        window.setTimeout(function(){
+            window.location.href = "/";
+        }, 3000);
+    </script>
+</div>
 
 <table class="table">
     <tr th:each="book: ${books}">
         <td><a th:href="@{/books/{id}(id=${book.id})}"><p th:text="${book.name}"></p></a></td>
         <td th:text="${book.year}"></td>
         <td th:text="${book.price}">₽</td>
-        <td><a th:href="@{/books/remove/{id}(id=${book.id})}"><button type="button"  class="btn btn-danger">Удалить</button></a></td>
-        <td><a th:href="@{/books/edit/{id}(id=${book.id})}"><button type="button"  class="btn btn-warning">Изменить</button></a></td>
+        <td th:if="${user_role == 'ADMIN'}"><a th:href="@{/books/remove/{id}(id=${book.id})}"><button type="button"  class="btn btn-danger">Удалить</button></a></td>
+        <td th:if="${user_role == 'ADMIN'}"><a th:href="@{/books/edit/{id}(id=${book.id})}"><button type="button"  class="btn btn-warning">Изменить</button></a></td>
     </tr>
 </table>
 </body>

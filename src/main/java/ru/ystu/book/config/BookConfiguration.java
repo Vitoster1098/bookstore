@@ -4,15 +4,21 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import ru.ystu.book.entity.Book;
+import ru.ystu.book.entity.Role;
+import ru.ystu.book.entity.User;
 import ru.ystu.book.repository.BookRepository;
+import ru.ystu.book.repository.UserRepository;
 
 import javax.annotation.PostConstruct;
+import java.util.Collections;
 
 @Configuration
 @RequiredArgsConstructor
 public class BookConfiguration {
     @Autowired
     private BookRepository bookRep;
+    @Autowired
+    private UserRepository userRep;
 
     @PostConstruct
     public void init(){
@@ -27,6 +33,12 @@ public class BookConfiguration {
         bookRep.save(new Book(4L, "Лучшие рецензии на пиццу", "Это книга, в которой собраны лучшие " +
                 "рецензии авторитетных, официальных критиков со всего мира. Прочти их мнение и выбери для себя лучшую пиццу!",
                 "25.11.2050", 399, null));
-
+        //Создание уважаемого администратора
+        User user = new User();
+        user.setRoles(Collections.singleton(Role.ADMIN));
+        user.setUsername("admin");
+        user.setPassword("admin");
+        user.setId(0L);
+        userRep.save(user);
     }
 }

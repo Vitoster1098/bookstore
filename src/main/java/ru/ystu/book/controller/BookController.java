@@ -44,13 +44,14 @@ public class BookController {
     public String getAllBooks(Model model, Principal user) {
         User curUser = userRep.findByUsername(user.getName());
         Set<Role> role = curUser.getRoles();
+
         Iterable<Book> items = bookRep.findAll();
         model.addAttribute("books", items);
-        if(role.toArray()[0] == Role.USER){
-            model.addAttribute("user_role", "USER");
-        } else {
+        if(role.toArray()[0] == Role.ADMIN)
             model.addAttribute("user_role", "ADMIN");
-        }
+        else
+            model.addAttribute("user_role", "USER");
+
         return "books";
     }
     @GetMapping("/add")
@@ -58,28 +59,38 @@ public class BookController {
         return "book_add";
     }
     @PostMapping("/add")
-    public String addBooks(Book book, Model model){
-        bookRep.save(book);
-        return "redirect:/";
+    public String addBooks(Book book, Model model, Principal user){
+        User curUser = userRep.findByUsername(user.getName());
+        Set<Role> role = curUser.getRoles();
+
+        if(role.toArray()[0] == Role.ADMIN) {
+            bookRep.save(book);
+            model.addAttribute("message", "Книга " + book.getName() + " добавлена.");
+
+        } else {
+            model.addAttribute("message", "Добавлять книги могут только пользователи с статусом Администратор.");
+        }
+        return "books";
     }
     @GetMapping("/{id}")
     public String getBook(@PathVariable Long id, Model model, Principal user) throws FileNotFoundException {
         Optional<Book> optionalBook = bookRep.findAllById(id);
         if (optionalBook.isEmpty())
             throw new FileNotFoundException();
+        model.addAttribute("book", optionalBook.get());
         User curUser = userRep.findByUsername(user.getName());
         Set<Role> role = curUser.getRoles();
-        if(role.toArray()[0] == Role.USER){
-            model.addAttribute("user_role", "USER");
-        } else {
+        if(role.toArray()[0] == Role.ADMIN)
             model.addAttribute("user_role", "ADMIN");
-        }
-        model.addAttribute("book", optionalBook.get());
-
+        else
+            model.addAttribute("user_role", "USER");
         return "book";
     }
     @PostMapping("/{id}")
-    public String removeBookById(@PathVariable Long id) {
+    public String removeBookById(@PathVariable Long id) throws FileNotFoundException {
+        Optional<Book> optionalBook = bookRep.findAllById(id);
+        if (optionalBook.isEmpty())
+            throw new FileNotFoundException();
         bookRep.deleteById(id);
         return "redirect:/";
     }
@@ -93,27 +104,36 @@ public class BookController {
     }
     @GetMapping("/edit/{id}")
     public String editBook(@PathVariable Long id, Model model, Principal user) throws FileNotFoundException {
-        Optional<Book> optionalBook = bookRep.findAllById(id);
-        if (optionalBook.isEmpty())
-            throw new FileNotFoundException();
         User curUser = userRep.findByUsername(user.getName());
         Set<Role> role = curUser.getRoles();
-        if(role.toArray()[0] == Role.USER){
-            model.addAttribute("user_role", "USER");
-        } else {
-            model.addAttribute("user_role", "ADMIN");
-        }
-        model.addAttribute("book", optionalBook.get());
 
-        return "book_edit";
+        if(role.toArray()[0] == Role.ADMIN){
+            Optional<Book> optionalBook = bookRep.findAllById(id);
+            if (optionalBook.isEmpty())
+                throw new FileNotFoundException();
+            model.addAttribute("book", optionalBook.get());
+            return "book_edit";
+        } else {
+            model.addAttribute("message", "Изменять книги могут только пользователи с статусом Администратор.");
+            return "books";
+        }
     }
     @GetMapping("/remove/{id}")
-    public String removeBook(Model model, @PathVariable Long id) throws FileNotFoundException {
-        Optional<Book> optionalBook = bookRep.findAllById(id);
-        if (optionalBook.isEmpty())
-            throw new FileNotFoundException();
-        bookRep.deleteById(id);
-        return "redirect:/";
+    public String removeBook(Model model, @PathVariable Long id, Principal user) throws FileNotFoundException {
+        User curUser = userRep.findByUsername(user.getName());
+        Set<Role> role = curUser.getRoles();
+
+        if(role.toArray()[0] == Role.ADMIN) {
+            Optional<Book> optionalBook = bookRep.findAllById(id);
+            if (optionalBook.isEmpty())
+                throw new FileNotFoundException();
+            bookRep.deleteById(id);
+            model.addAttribute("message", "Книга " + bookRep.findAllById(id).get().getName() +" удалена.");
+            return "redirect:/";
+        } else {
+            model.addAttribute("message", "Удалять книги могут только пользователи с статусом Администратор.");
+            return "books";
+        }
     }
     @GetMapping("/cart/{id}")
     public String addToCart(@PathVariable Long id, Principal user){
@@ -153,5 +173,33 @@ public class BookController {
             }
         }
         return "redirect:/books/mycart";
+    }
+    @GetMapping("/search{name}&year={year}&minprice={minprice}&maxprice={maxprice}")
+    public String filtering(@PathVariable("name") String name, @PathVariable("year") String year,
+                            @PathVariable("minprice") String minprice, @PathVariable("maxprice") String maxprice, Model model) {
+        System.out.println("Попали в обработку поиска");
+        List<Book> bookRes = new ArrayList<>(); //Найденные книги
+        if(name == "" && year == "" && minprice == "" && maxprice == ""){
+            model.addAttribute("message", "Параметры фильтра отсутствуют.");
+            return "books";
+        }
+
+        if(name != "" && year != "" && minprice != "" && maxprice != "")
+            bookRes = bookRep.findWithLike(name.toString(), year.toString(), Double.parseDouble(minprice), Double.parseDouble(maxprice));
+        if(name == "" && year != "" && minprice != "" && maxprice != "")
+            bookRes = bookRep.findWithLike2(year.toString(), Double.parseDouble(minprice), Double.parseDouble(maxprice));
+        if(name == "" && year == "" && minprice != "" && maxprice != "")
+            bookRes = bookRep.findWithLike3(Double.parseDouble(minprice), Double.parseDouble(maxprice));
+        if(name == "" && year == "" && minprice == "" && maxprice != "")
+            bookRes = bookRep.findWithLike4(Double.parseDouble(maxprice));
+        if(name == "" && year == "" && minprice != "" && maxprice == "")
+            bookRes = bookRep.findWithLike5(Double.parseDouble(minprice));
+        if(name == "" && year != "" && minprice != "" && maxprice == "")
+            bookRes = bookRep.findWithLike6(year.toString());
+        if(name != "" && year != "" && minprice == "" && maxprice == "")
+            bookRes = bookRep.findWithLike7(name.toString());
+
+        model.addAttribute("books", bookRes);
+        return "books";
     }
 }
