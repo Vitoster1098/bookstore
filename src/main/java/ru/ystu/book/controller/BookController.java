@@ -130,6 +130,14 @@ public class BookController {
             if (optionalBook.isEmpty())
                 throw new FileNotFoundException();
             String bookname = bookRep.findAllById(id).get().getName();
+
+            List<Cart> carts = cartRep.findAll();
+            for (Cart cart : carts) {
+                if(cart.getBookId() == id) {
+                    cartRep.delete(cart);
+                }
+            }
+
             bookRep.deleteById(id);
             model.addAttribute("message", "Книга '" + bookname +"' удалена.");
         } else {
@@ -174,6 +182,12 @@ public class BookController {
                 break;
             }
         }
+        return "redirect:/books/mycart";
+    }
+    @GetMapping("/mycart/remove/all")
+    public String remAllCart(Model model, Principal user){
+        List<Cart> carts = cartRep.findAllByUser(userRep.findByUsername(user.getName()).getId());
+        cartRep.deleteAll(carts);
         return "redirect:/books/mycart";
     }
     @GetMapping("/search")

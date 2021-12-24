@@ -29,6 +29,7 @@
 </div>
 
 <h1>Корзина</h1>
+<a href="/books/mycart/remove/all"><button class="btn btn-danger">Очистить корзину</button></a>
 <table class="table">
     <div th:if="${cartitems.size() > 0}">
         <tr th:each="book: ${cartitems}">
