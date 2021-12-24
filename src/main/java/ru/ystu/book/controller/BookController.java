@@ -131,7 +131,7 @@ public class BookController {
                 throw new FileNotFoundException();
             String bookname = bookRep.findAllById(id).get().getName();
             bookRep.deleteById(id);
-            model.addAttribute("message", "Книга " + bookname +" удалена.");
+            model.addAttribute("message", "Книга '" + bookname +"' удалена.");
         } else {
             model.addAttribute("message", "Удалять книги могут только пользователи с статусом Администратор.");
         }
