@@ -44,6 +44,8 @@ public class BookController {
     public String getAllBooks(Model model, Principal user) {
         User curUser = userRep.findByUsername(user.getName());
         Set<Role> role = curUser.getRoles();
+        model.addAttribute("cart_count", cartRep.countAllByUser(curUser.getId()));
+
         if(model.getAttribute("books") != null){
 
         } else {

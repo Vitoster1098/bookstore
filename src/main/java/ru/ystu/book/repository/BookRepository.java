@@ -12,7 +12,6 @@ import java.util.Optional;
 public interface BookRepository extends JpaRepository<Book, Long> {
     Optional<Book> findAllByNameContains(String name);
     Optional<Book> findAllById(Long id);
-    long countAllByName(String name);
 
     @Query("select new Book(u.id, u.name, u.description, u.year,u.price) from Book u where u.name like %:name% and u.year=:year and u.price>:minprice and u.price<:maxprice")
     List<Book> findWithLike(@Param("name") String name, @Param("year") String year, @Param("minprice") double minprice,
