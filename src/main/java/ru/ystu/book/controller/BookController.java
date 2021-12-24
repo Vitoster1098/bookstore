@@ -132,11 +132,10 @@ public class BookController {
             String bookname = bookRep.findAllById(id).get().getName();
             bookRep.deleteById(id);
             model.addAttribute("message", "Книга " + bookname +" удалена.");
-            return "books";
         } else {
             model.addAttribute("message", "Удалять книги могут только пользователи с статусом Администратор.");
-            return "books";
         }
+        return "books";
     }
     @GetMapping("/cart/{id}")
     public String addToCart(@PathVariable Long id, Principal user){
