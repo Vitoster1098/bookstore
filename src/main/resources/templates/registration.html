@@ -8,6 +8,14 @@
     <title>Регистация</title>
 </head>
 <body>
+<div class="panel-info" th:if="${message}"> <!--После показа сообщения будет редирект на главную страницу-->
+    <p th:text="${message}"></p>
+    <script>
+        window.setTimeout(function(){
+            window.location.href = "/";
+        }, 3000);
+    </script>
+</div>
 <div class="container">
     <div class="row">
         <form action="/registration" method="post">
