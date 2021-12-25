@@ -69,8 +69,7 @@ public class BookController {
 
         if(role.toArray()[0] == Role.ADMIN) {
             bookRep.save(book);
-            model.addAttribute("message", "Книга " + book.getName() + " добавлена.");
-
+            model.addAttribute("message", "Книга " + book.getName() + " затронута.");
         } else {
             model.addAttribute("message", "Добавлять книги могут только пользователи с статусом Администратор.");
         }
@@ -172,6 +171,29 @@ public class BookController {
         }
         model.addAttribute("cartitems", books);
         model.addAttribute("totalprice", curPrice);
+        return "mycart";
+    }
+    @GetMapping("/mycart/{id}")
+    public String getCartById(@PathVariable Long id, Model model, Principal user){
+        User curUser = userRep.findByUsername(user.getName());
+        Set<Role> role = curUser.getRoles();
+
+        if(role.toArray()[0] == Role.ADMIN) {
+            Optional<User> findUser = userRep.findById(id);
+            List<Cart> carts = cartRep.findAllByUser(findUser.get().getId());
+            List<Book> books = new ArrayList<>();
+
+            for(Cart cart : carts) {
+                Optional<Book> bk = bookRep.findById(cart.getBookId());
+                bk.ifPresent(books::add);
+            }
+
+            model.addAttribute("cartid", id);
+            model.addAttribute("cartitems", books);
+            model.addAttribute("can_delete", "false");
+        } else {
+            model.addAttribute("message", "Пользователь не может просматривать другие корзины");
+        }
         return "mycart";
     }
     @GetMapping("/mycart/remove/{id}")
