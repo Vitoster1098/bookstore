@@ -74,6 +74,11 @@ public class AdminPanelController {
                 return "admin_panel";
             }
             else {
+                if(usr.get().getId() == curUser.getId()) {
+                    model.addAttribute("message", "Вы не можете удалить сами себя");
+                    return "admin_panel";
+                }
+
                 userRep.deleteById(id);
                 model.addAttribute("message", "Пользователь удален");
                 return "admin_panel";
