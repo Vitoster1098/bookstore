@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <title th:text="'Редактирование пользователя ' + ${user.getUsername()}"></title>
+</head>
+<body>
+<div th:replace="header :: content"></div>
+<h1 th:text="'Редактирование пользователя ' + ${user.getUsername()}"></h1><br>
+<p th:value="${#strings.length(user.getRoles())}"></p>
+<div class="container">
+    <div class="row">
+        <form method="post" action="/panel/edituser">
+            <input name="id" type="hidden" th:value="${user.getId()}">
+            <label for="name">Имя пользователя: <input name="username" id="name" class="form-control" th:value="${user.getUsername()}" /></label><br>
+            <label for="password">Пароль пользователя: <input name="password" id="password" class="form-control" th:value="${user.getPassword()}" /></label><br><br>
+            <label for="roles">Роль пользователя: <input name="roles" id="roles" th:value="${#strings.substring(user.getRoles(), 1, #strings.length(user.getRoles())-1)}" /></label><br><br>
+            <button type="submit" class="btn btn-dark">Изменить</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>

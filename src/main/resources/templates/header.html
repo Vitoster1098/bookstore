@@ -9,15 +9,15 @@
 
                     <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                         <li><a href="/" class="nav-link px-2 link-secondary">Главная</a></li>
-                        <li><a href="/books/add" class="nav-link px-2 link-dark">Добавить книгу</a></li>
-                        <li><a href="/books/mycart" class="nav-link px-2 link-dark">Корзина<div th:text="${cart_count}" style="color: darkred; text-align: center"></div></a></li>
+                        <li th:if="${user_role == 'ADMIN'}"><a href="/books/add" class="nav-link px-2 link-dark">Добавить книгу</a></li>
+                        <li th:if="${user_role == 'ADMIN'}"><a href="/books/mycart" class="nav-link px-2 link-dark">Корзина<div th:text="${cart_count}" style="color: darkred; text-align: center"></div></a></li>
                     </ul>
 
                     <div class="col-md-3 text-end">
                         <a href="/login"><button type="button" class="btn btn-outline-primary me-2">Login</button></a>
                         <a href="/registration"><button type="button" class="btn btn-outline-primary">Sign-up</button></a>
                         <a href="/logout"><button type="button" class="btn btn-outline-primary">Logout</button></a>
-                        <a href="/panel"><button type="button" class="btn btn-outline-primary">Admin panel</button></a>
+                        <a th:if="${user_role == 'ADMIN'}" href="/panel/"><button type="button" class="btn btn-outline-primary">Admin panel</button></a>
                     </div>
                 </header>
             </div>

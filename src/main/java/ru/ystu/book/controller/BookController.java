@@ -59,7 +59,9 @@ public class BookController {
         return "books";
     }
     @GetMapping("/add")
-    public String getAddBooks(Model model){
+    public String getAddBooks(Model model, Principal user){
+        User curUser = userRep.findByUsername(user.getName());
+        model.addAttribute("cart_count", cartRep.countAllByUser(curUser.getId()));
         return "book_add";
     }
     @PostMapping("/add")
@@ -87,6 +89,7 @@ public class BookController {
             model.addAttribute("user_role", "ADMIN");
         else
             model.addAttribute("user_role", "USER");
+        model.addAttribute("cart_count", cartRep.countAllByUser(curUser.getId()));
         return "book";
     }
     @PostMapping("/{id}")
@@ -98,11 +101,13 @@ public class BookController {
         return "redirect:/";
     }
     @GetMapping("/byname/{name}")
-    public String getBookByName(@PathVariable String name, Model model) throws FileNotFoundException {
+    public String getBookByName(@PathVariable String name, Model model, Principal user) throws FileNotFoundException {
         Optional<Book> optionalBook = bookRep.findAllByNameContains(name);
         if (optionalBook.isEmpty())
             throw new FileNotFoundException();
+        User curUser = userRep.findByUsername(user.getName());
         model.addAttribute("book", optionalBook.get());
+        model.addAttribute("cart_count", cartRep.countAllByUser(curUser.getId()));
         return "book";
     }
     @GetMapping("/edit/{id}")
@@ -114,6 +119,7 @@ public class BookController {
             Optional<Book> optionalBook = bookRep.findAllById(id);
             if (optionalBook.isEmpty())
                 throw new FileNotFoundException();
+            model.addAttribute("cart_count", cartRep.countAllByUser(curUser.getId()));
             model.addAttribute("book", optionalBook.get());
             return "book_edit";
         } else {
@@ -171,6 +177,7 @@ public class BookController {
         }
         model.addAttribute("cartitems", books);
         model.addAttribute("totalprice", curPrice);
+        model.addAttribute("cart_count", cartRep.countAllByUser(curUser.getId()));
         return "mycart";
     }
     @GetMapping("/mycart/{id}")
@@ -183,13 +190,16 @@ public class BookController {
             List<Cart> carts = cartRep.findAllByUser(findUser.get().getId());
             List<Book> books = new ArrayList<>();
 
+            double curPrice = 0;
             for(Cart cart : carts) {
                 Optional<Book> bk = bookRep.findById(cart.getBookId());
                 bk.ifPresent(books::add);
+                curPrice += bk.get().getPrice();
             }
 
             model.addAttribute("cartid", id);
             model.addAttribute("cartitems", books);
+            model.addAttribute("totalprice", curPrice);
             model.addAttribute("can_delete", "false");
         } else {
             model.addAttribute("message", "Пользователь не может просматривать другие корзины");
@@ -207,6 +217,18 @@ public class BookController {
             }
         }
         return "redirect:/books/mycart";
+    }
+    @GetMapping("/mycart/removeall/{id}")
+    public String clearCartById(Model model, Principal user, @PathVariable Long id) {
+        Optional<User> usr = userRep.findById(id);
+        if(usr.isPresent()) {
+            List<Cart> carts = cartRep.findAllByUser(userRep.findById(id).get().getId());
+            cartRep.deleteAll(carts);
+            model.addAttribute("message", "Корзина пользователя " + usr.get().getUsername() + " очищена.");
+        } else {
+            model.addAttribute("message", "Пользователь не найден");
+        }
+        return "admin_panel";
     }
     @GetMapping("/mycart/remove/all")
     public String remAllCart(Model model, Principal user){

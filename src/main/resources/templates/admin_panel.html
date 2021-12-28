@@ -15,18 +15,19 @@
     <p th:text="${message}"></p>
     <script>
         window.setTimeout(function(){
-            window.location.href = "/";
+            window.location.href = "/panel/";
         }, 3000);
     </script>
 </div>
 
 <table class="table">
-    <tr th:each="user: ${users}">
+    <tr th:each="user, state: ${users}">
         <td><p th:text="${user.username}"></p></td>
-        <td>Статус: <p th:text="${user.roles}"></p></td>
-        <!--td><a th:href="@{/books/mycart/{id}(id=${user.id})}">Корзина</a></td>
-        <td th:if="${user_role == 'ADMIN'}"><a th:href="@{/users/remove/{id}(id=${user.id})}"><button type="button"  class="btn btn-danger">Удалить пользователя</button></a></td>
-        <td th:if="${user_role == 'ADMIN'}"><a th:href="@{/users/edit/{id}(id=${user.id})}"><button type="button"  class="btn btn-warning">Изменить пользователя</button></a></td-->
+        <td th:text="'Статус: ' + ${user.roles}"></td>
+        <td><a th:href="@{/books/mycart/{id}(id=${user.id})}"><p th:text="'Корзина (' + ${cart_counts[state.index]} + ')'"></p></a></td>
+        <td th:if="${user_role == 'ADMIN'}"><a th:href="@{/panel/removeuser/{id}(id=${user.id})}"><button type="button"  class="btn btn-danger">Удалить пользователя</button></a></td>
+        <td th:if="${user_role == 'ADMIN'}"><a th:href="@{/panel/edituser/{id}(id=${user.id})}"><button type="button"  class="btn btn-warning">Изменить пользователя</button></a></td>
+        <td th:if="${user_role == 'ADMIN'}"><a th:href="@{/books/mycart/removeall/{id}(id=${user.id})}"><button type="button"  class="btn btn-warning">Очистить корзину пользователя</button></a></td>
     </tr>
 </table>
 </body>

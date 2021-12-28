@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface CartRepository extends JpaRepository<Cart, Long> {
     List<Cart> findAllByUser(Long user);
-    Cart findCartByUser(Long user);
+    List<Cart> findCartByUser(Long user);
     int countAllByUser(Long user);
 }
