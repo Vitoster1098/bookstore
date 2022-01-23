@@ -121,6 +121,7 @@ public class BookController {
                 throw new FileNotFoundException();
             model.addAttribute("cart_count", cartRep.countAllByUser(curUser.getId()));
             model.addAttribute("book", optionalBook.get());
+            model.addAttribute("user_role", "ADMIN");
             return "book_edit";
         } else {
             model.addAttribute("message", "Изменять книги могут только пользователи с статусом Администратор.");

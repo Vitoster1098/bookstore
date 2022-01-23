@@ -2,7 +2,6 @@ package ru.ystu.book.config;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import ru.ystu.book.repository.UserRepository;
 import ru.ystu.book.entity.Role;
 import ru.ystu.book.entity.User;
 

@@ -17,10 +17,10 @@
             <input name="id" type="hidden" th:value="${book.id}">
             <label for="name">Название книги: <input name="name" id="name" class="form-control" th:value="${book.name}" /></label><br>
             <label for="year">Дата выпуска: <input name="year" id="year" class="form-control" th:value="${book.year}" /></label><br><br>
-            <label for="description">Описание книги: <textarea name="description" id="description" th:text="${book.description}"></textarea></label><br><br>
+            <label for="description">Описание книги: <textarea name="description" id="description" th:field="${book.description}"></textarea></label><br><br>
             <label for="price">Цена продажи: <input name="price" id="price" class="form-control" th:value="${book.price}" /></label><br>
             <button type="submit" class="btn btn-dark">Изменить</button>
-    </form>
+        </form>
     </div>
 </div>
 </body>
